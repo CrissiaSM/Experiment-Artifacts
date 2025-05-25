@@ -1,0 +1,139 @@
+import pyautogui
+import psutil
+import time
+from pywinauto import Application
+from pywinauto.mouse import click
+
+def abrir_application():
+    # Pressiona a tecla Windows para abrir o menu Iniciar
+    pyautogui.press("win")
+    time.sleep(1)  # Aguarda o menu iniciar abrir
+
+    # Digita "Samsung Gallery"
+    pyautogui.write("application", interval=0.1)
+    time.sleep(2)  # Aguarda os resultados aparecerem
+
+    # Pressiona Enter para abrir o aplicativo
+    pyautogui.press("enter")
+    time.sleep(5)  # Aguarda a aplicação abrir completamente
+
+def pesquisar_e_clicar_thumbnail():
+    try:
+        # Conectar a aplicação
+        app = Application(backend="uia").connect(title_re="aplicação")
+
+        # Obtém a janela principal do aplicação
+        janela = app.window(title_re="aplicação")
+
+        # Localiza e clica no primeiro item com AutomationId = Thumbnail
+       # primeiro_thumbnail = janela.child_window(auto_id="Thumbnail")
+       # primeiro_thumbnail.click_input()
+
+       # print("Primeiro item (Thumbnail) clicado com sucesso!")
+   # except Exception as e:
+       # print(f"Erro ao clicar no Thumbnail: {e}")
+
+        # Localiza o campo de pesquisa 
+        campo_pesquisa = janela.child_window(control_type="Edit") 
+        campo_pesquisa.click_input()
+        #campo_pesquisa.type_keys("machupicchu", with_spaces=True)
+        pyautogui.write("machupicchu", interval=0.1)
+        pyautogui.press("enter")
+        time.sleep(2)  # Aguarda os resultados aparecerem
+
+        # Clicar no primeiro item com AutomationId = Thumbnail
+        primeiro_thumbnail = janela.child_window(auto_id="Thumbnail")
+        primeiro_thumbnail.click_input()
+        time.sleep(5)
+
+        print("Pesquisa realizada e primeiro resultado clicado com sucesso!")
+    except Exception as e:
+        print(f"Erro ao realizar a pesquisa e clicar no primeiro resultado: {e}")
+
+def clicar_more_option():
+    try:        
+        # Conectar a aplicação
+        app = Application(backend="uia").connect(title="machupicchu-pareja-desktop-.png ‎- aplicação")
+
+        # Obtém a janela principal da aplicação
+        janela = app.window(title="machupicchu-pareja-desktop-.png ‎- Samsung Gallery")
+
+         # Exibe todos os elementos disponíveis na interface
+       # print(janela.print_control_identifiers())
+
+         # Localiza o botão "Mais opções" pelo AutomationId
+        #botao_mais = janela.child_window(auto_id="ViewerCommandBarMoreButton" , control_type="Button")
+        botao_mais = app.window().child_window(auto_id="ViewerCommandBarMoreButton" , control_type="Button")
+
+        if botao_mais.exists():
+            botao_mais.click_input()
+            time.sleep(3)
+            print("Botão 'Mais' clicado com sucesso!")
+        else:
+            print("Botão 'Mais' não encontrado.")
+
+    except Exception as e:
+        print(f"Erro ao clicar no botão 'Mais': {e}")
+
+def clicar_remaster_option():
+    try:        
+        # Conectar a aplicação
+        app = Application(backend="uia").connect(title="machupicchu-pareja-desktop-.png \u200e- aplicação")
+
+        # Obtém a janela principal da aplicação
+        #janela = app.window(title="machupicchu-pareja-desktop-.png ‎-aplicação")
+
+        # Localiza o botão "Remaster" pelo AutomationId
+        #botao_remaster = janela.child_window(auto_id="ViewerRemasterAppBarButton" , control_type="Button")
+        #botao_remaster = app.window().child_window(title="Remasterizar foto", auto_id="ViewerRemasterAppBarButton", control_type="Button").wrapper_object()
+        #botao_remaster.click_input()
+        click(coords=(1643, 275))
+        
+        #if botao_remaster.exists():
+           # botao_remaster.click_input()
+           # print("Botão 'Remaster' clicado com sucesso!")
+       # else:
+           # print("Botão 'Remaster' não encontrado.")
+
+    except Exception as e:
+        print(f"Erro ao clicar no botão 'Remaster': {e}")
+        # Fallback para coordenadas
+        #click(coords=(1643, 275))
+
+def monitorar_desempenho():
+    try:
+        # Conectar ao aplicação
+        app = Application(backend="uia").connect(title="machupicchu-pareja-desktop-.png ‎- aplicação")
+        janela = app.window()
+        
+        # Monitoramento de recursos
+        pid = app.process
+        processo = psutil.Process(pid)
+        
+        start_time = time.time()
+        while True:
+            try:
+                # Verifica se o elemento "RemasteringPictureText" está visível
+                elemento = janela.child_window(auto_id="RemasteringPictureText")
+                if not elemento.exists():
+                    break
+                
+                cpu_usage = processo.cpu_percent(interval=1)  # Consumo de CPU
+                memory_usage = processo.memory_info().rss / (1024 * 1024)  # Memória em MB
+                elapsed_time = time.time() - start_time
+                
+                print(f"Tempo decorrido: {elapsed_time:.2f} s, CPU: {cpu_usage:.2f}%, Memória: {memory_usage:.2f} MB")
+            
+            except Exception as e:
+                print(f"Erro ao monitorar desempenho: {e}")
+                break
+        
+    except Exception as e:
+        print(f"Erro ao conectar ao aplicativo: {e}")
+     
+# Executa as funções
+abrir_aplicação()
+pesquisar_e_clicar_thumbnail()
+clicar_more_option()
+clicar_remaster_option()
+monitorar_desempenho()
