@@ -22,8 +22,8 @@ def pesquisar_e_clicar_thumbnail():
         # Conectar ao aplicação
         app = Application(backend="uia").connect(title_re="aplicação")
 
-        # Obtém a janela principal do Samsung Gallery
-        janela = app.window(title_re="Samsung Gallery")
+        # Obtém a janela principal da aplicação
+        janela = app.window(title_re="aplicação")
 
         # Localiza e clica no primeiro item com AutomationId = Thumbnail
        # primeiro_thumbnail = janela.child_window(auto_id="Thumbnail")
